@@ -1,6 +1,9 @@
-assets/*
-!assets/.gitignore
-protected/runtime/*
-!protected/runtime/.gitignore
-protected/data/*.db
-themes/classic/views/
+/.buildpath
+/.settings
+/.project
+.DS_Store
+/app/config/main.php
+/app/config/params.php
+/app/config/cas.php
+/app/web/assets
+
