@@ -4,15 +4,8 @@ namespace app\models;
 class CustomsCompare {
 	
 	public function compare($pdfRes, $excelRes) {
-		reset($pdfRes);
-		$firstRow = current($pdfRes);
-		$targetList = [];
-		foreach ($excelRes as $k => $v) {
-			if ($firstRow['name'] == $v[0]['name'] && $this->compareNo($firstRow['no'], $v[0]['no'])) {
-				$targetList = $v;
-				break;
-			}
-		}
+		reset($excelRes);
+		$targetList= current($excelRes);
 		
 		if (empty($targetList)) {
 			return ['pdfonly' => $pdfRes];
