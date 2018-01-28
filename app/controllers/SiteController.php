@@ -45,11 +45,6 @@ class SiteController extends Controller
     				$excelParser = new \app\models\CustomsExcelParser();
     				$excelParser->parse($_FILES['excelfile']['tmp_name']);
     				$excelResult = $excelParser->getParsedResult();
-    				if (!is_array($excelResult)) {
-    					$errMsg = 'Excel文件中没有找到商品信息';
-    				} elseif (count($excelResult) > 1) {
-    					$errMsg = 'Excel文件中有多个表格，只会用第一个表格比较';
-    				}
     				$pdfParser = new \app\models\CustomsPdfParser();
     				$pdfParser->parse($output);
     				$pdfResult = $pdfParser->getParsedResult();

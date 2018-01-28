@@ -4,13 +4,30 @@ namespace app\models;
 class CustomsCompare {
 	
 	public function compare($pdfRes, $excelRes) {
-		reset($excelRes);
-		$targetList= current($excelRes);
+		$lastSameNum = 0;
+		$lastRes = null;
+		foreach ($excelRes as $oneTable) {
+			$tmpRes = $this->compareOneTable($pdfRes, $oneTable);
+			if (empty($tmpRes['same'])) {
+				continue;
+			}
+			if (count($tmpRes['same']) > $lastSameNum) {
+				$lastRes = $tmpRes;
+				$lastSameNum = count($tmpRes['same']);
+			}
+		}
+		if (empty($lastRes)) {
+			$lastRes = ['pdfonly' => $pdfRes];
+		}
 		
+		return $lastRes;
+	}
+	
+	protected function compareOneTable($pdfRes, $targetList) {
 		if (empty($targetList)) {
 			return ['pdfonly' => $pdfRes];
 		}
-
+		
 		$tmpPdfOnlyData = [];
 		$tmpDiffData = [];
 		$tmpSameData = [];
@@ -54,9 +71,9 @@ class CustomsCompare {
 				$tmpSameData[] = $v;
 			}
 		}
-
+		
 		return ['pdfonly' => $tmpPdfOnlyData, 'diff' => $tmpDiffData, 'same' => $tmpSameData,
-			'excelonly' => array_values($tmpExcelData)];
+				'excelonly' => array_values($tmpExcelData)];
 	}
 	
 	protected function compareNo($pdfItemNo, $excelItemNo) {

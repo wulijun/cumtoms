@@ -79,15 +79,15 @@ class CustomsPdfParser
 		do {
 			$line = $this->inputLines[$this->curParsedLineNo];
 			$matches = null;
-			$n = preg_match('/(\d+)个\s+(\d+[\d\.]*)\s+(\d+[\d\.]*)/', $line, $matches);			
+			$n = preg_match('/(\d+)(个|台)\s+(\d+[\d\.]*)\s+(\d+[\d\.]*)/', $line, $matches);			
 			if ($n > 0) {
 				$this->result[$this->curItemId]['num'] = trim($matches[1]);
-				$this->result[$this->curItemId]['unit_price'] = trim($matches[2]);
-				$this->result[$this->curItemId]['total_price'] = trim($matches[3]);
+				$this->result[$this->curItemId]['unit_price'] = trim($matches[3]);
+				$this->result[$this->curItemId]['total_price'] = trim($matches[4]);
 				return;
 			} else {
 				$matches = null;
-				$n = preg_match('/(\d+)个/', $line, $matches);				
+				$n = preg_match('/(\d+)(个|台)/', $line, $matches);
 				if ($n > 0) {
 					$this->result[$this->curItemId]['num'] = trim($matches[1]);
 				}
