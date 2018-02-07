@@ -6,7 +6,7 @@ $colNameMap = [
 	'excelonly' => ['id' => 'ID', 'name' => '中文描述', 'no' => '商品编码', 'num' => '数量', 'unit_price' => '单价', 'total_price' => 'CIF总价', 'country' => '原产国'],
 ];
 
-function _tpl_display_same($data, $key, $name, $header, $reqParam) {
+function _tpl_display_same($data, $key, $name, $header, $excelFile, $pdfFile) {
 	if (empty($data[$key])) return;
 	$headerKey = [];
 	$headerName = [];
@@ -14,9 +14,9 @@ function _tpl_display_same($data, $key, $name, $header, $reqParam) {
 		$headerKey[] = $k;
 		$headerName[] = $v;
 	}
-	$name = sprintf('%s(%s 对比 %s)', $name, Html::encode($reqParam['excelFilename']), Html::encode($reqParam['pdfFilename']));
+	$name = sprintf('%s(%s 对比 %s)', $name, Html::encode($excelFile), Html::encode($pdfFile));
 	echo <<<EOT
-    <div class="panel panel-default">
+    <div class="panel panel-default same-item-div">
       <div class="panel-heading">{$name}</div>
       <div class="panel-body">
         <div class="table-responsive">
@@ -44,7 +44,7 @@ EOT;
 EOT;
 }
 	
-function _tpl_display_diff($data, $key, $name, $header, $reqParam) {
+function _tpl_display_diff($data, $key, $name, $header, $excelFile, $pdfFile) {
 	if (empty($data[$key])) return;
 	$headerKey = [];
 	$headerName = [];
@@ -52,7 +52,7 @@ function _tpl_display_diff($data, $key, $name, $header, $reqParam) {
 		$headerKey[] = $k;
 		$headerName[] = $v;
 	}
-	$name = sprintf('%s(%s 对比 %s)', $name, Html::encode($reqParam['excelFilename']), Html::encode($reqParam['pdfFilename']));
+	$name = sprintf('%s(%s 对比 %s)', $name, Html::encode($excelFile), Html::encode($pdfFile));
 	echo <<<EOT
     <div class="panel panel-default">
       <div class="panel-heading"><p class="h4 text-danger">{$name}</p></div>
@@ -102,10 +102,11 @@ EOT;
             Excel: <input accept="application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="excel-file-uploader" type="file" name="excelfile">
           </div>
 		  <div class="form-group">
-            PDF: <input accept="application/pdf" id="pdf-file-uploader" type="file" name="pdffile">
+            PDF: <input accept="application/pdf" id="pdf-file-uploader" type="file" name="pdffile[]" multiple="multiple">
           </div>
           <div class="form-group">
             <button type="submit" class="btn btn-primary search-btn">开始比对</button>
+            <button type="button" id="hide-same-item" class="btn btn-primary" data-toggle-text="显示信息一致的商品">隐藏信息一致的商品</button>
           </div>                   
         </form>
   </div>
@@ -116,11 +117,24 @@ EOT;
 </div>
 <div class="row">
   <div class="col-lg-12">
-  <?php 
-  _tpl_display_diff($checkRes, 'pdfonly', '只在PDF中出现的商品', $colNameMap['pdfonly'], $reqParam);
-  _tpl_display_diff($checkRes, 'excelonly', '只在Excel中出现的商品', $colNameMap['excelonly'], $reqParam);
-  _tpl_display_diff($checkRes, 'diff', '不一致的商品', $colNameMap['pdfonly'], $reqParam);
-  _tpl_display_same($checkRes, 'same', '信息一致的商品', $colNameMap['pdfonly'], $reqParam);
+  <?php
+  foreach ($checkRes as $v) {
+      _tpl_display_diff($v['res'], 'pdfonly', '只在PDF中出现的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
+      _tpl_display_diff($v['res'], 'excelonly', '只在Excel中出现的商品', $colNameMap['excelonly'], $reqParam['excelFilename'], $v['name']);
+      _tpl_display_diff($v['res'], 'diff', '不一致的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
+      _tpl_display_same($v['res'], 'same', '信息一致的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
+  }
   ?>
   </div>
 </div>
+<script>
+$(function() {
+	$('#hide-same-item').click(function() {
+		var curObj = $(this);
+		var tmpTxt = curObj.text();
+		curObj.text(curObj.data("toggle-text"));
+		curObj.data("toggle-text", tmpTxt);
+		$('.same-item-div').toggle();
+	});
+});
+</script>

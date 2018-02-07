@@ -24,41 +24,50 @@ class SiteController extends Controller
     {
     	$reqParam = [];
     	$errMsg = '';
-    	$res = [];
+    	$pdfFiles = [];
     	if ($this->_req->getIsPost()) {
     		if (empty($_FILES['excelfile']) || $_FILES['excelfile']['error'] != UPLOAD_ERR_OK) {
     			$errMsg .= "Excel文件上传失败。";
     		}
-    		if (empty($_FILES['pdffile']) || $_FILES['pdffile']['error'] != UPLOAD_ERR_OK) {
-    			$errMsg .= "PDF文件上传失败。";
-    		}
-    		if ($errMsg == '') {
-    			$reqParam['excelFilename'] = $_FILES['excelfile']['name'];
-    			$reqParam['pdfFilename'] = $_FILES['pdffile']['name'];
-    			$extractTextCmd = 'java -jar '.APP_PATH.'/vendor/pdfbox/pdfbox-app-2.0.8.jar ExtractText -console -sort ';
-    			$extractTextCmd .= $_FILES['pdffile']['tmp_name'];
-    			$output = null;
-    			exec($extractTextCmd, $output, $ret);
-    			if (empty($output)) {
-    				$errMsg = 'PDF文件抽取文本失败';
-    			} else {
-    				$excelParser = new \app\models\CustomsExcelParser();
-    				$excelParser->parse($_FILES['excelfile']['tmp_name']);
-    				$excelResult = $excelParser->getParsedResult();
-    				$pdfParser = new \app\models\CustomsPdfParser();
-    				$pdfParser->parse($output);
-    				$pdfResult = $pdfParser->getParsedResult();
-    				if (empty($pdfResult)) {
-    					$errMsg = 'PDF文件中没有找到商品信息';
+    		if (!empty($_FILES['pdffile'])) {
+    			foreach ($_FILES['pdffile']['name'] as $k => $v) {
+    				if ($_FILES['pdffile']['error'][$k] != UPLOAD_ERR_OK) {
+    					$errMsg .= "{$v}上传失败。";
     				} else {
-    					$c = new \app\models\CustomsCompare();
-    					$res = $c->compare($pdfResult, $excelResult);
+    					$pdfFiles[] = ['name' => $v, 'file' => $_FILES['pdffile']['tmp_name'][$k]];
     				}
     			}
+    		}
+    		if (!empty($pdfFiles)) {
+    			$reqParam['excelFilename'] = $_FILES['excelfile']['name'];
+    			$excelParser = new \app\models\CustomsExcelParser();
+    			$excelParser->parse($_FILES['excelfile']['tmp_name']);
+    			$excelResult = $excelParser->getParsedResult();
+    			
+    			$extractTextCmd = 'java -jar '.APP_PATH.'/vendor/pdfbox/pdfbox-app-2.0.8.jar ExtractText -console -sort ';
+    			foreach ($pdfFiles as $k => $v) {
+    				$tmpCmd = $extractTextCmd . $v['file'];
+    				$output = null;
+    				exec($tmpCmd, $output, $ret);
+    				if (empty($output)) {
+    					$errMsg .= $v['name'].'抽取文本失败。';
+    				} else {
+    					$pdfParser = new \app\models\CustomsPdfParser();
+    					$pdfParser->parse($output);
+    					$pdfResult = $pdfParser->getParsedResult();
+    					if (empty($pdfResult)) {
+    						$errMsg .= $v['name'].'中没有找到商品信息。';
+    					} else {
+    						$c = new \app\models\CustomsCompare();
+    						$pdfFiles[$k]['res'] = $c->compare($pdfResult, $excelResult);
+    					}
+    				}
+    			}
+
     		}    		
     	}
     	
-    	return $this->render('customsCheck', ['checkRes' => $res, 'errMsg' => $errMsg, 'reqParam' => $reqParam]);
+    	return $this->render('customsCheck', ['checkRes' => $pdfFiles, 'errMsg' => $errMsg, 'reqParam' => $reqParam]);
     }
 
 }

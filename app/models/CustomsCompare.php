@@ -57,10 +57,10 @@ class CustomsCompare {
 			if (!$this->compareCountry($v['weight_country'], $excelRow['country'])) {
 				$v['diff_col']['weight_country'] = 'country';
 			}
-			if (abs($v['unit_price'] - $excelRow['unit_price']) > 0.01) {
+			if (abs($v['unit_price'] - $excelRow['unit_price']) > 0.00001) {
 				$v['diff_col']['unit_price'] = 'unit_price';
 			}
-			if (abs($v['total_price'] - $excelRow['total_price']) > 0.01) {
+			if (abs($v['total_price'] - $excelRow['total_price']) > 0.00001) {
 				$v['diff_col']['total_price'] = 'total_price';
 			}
 			
