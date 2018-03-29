@@ -54,12 +54,12 @@ class CustomsCompare {
 			if ($v['num'] != $excelRow['num']) {
 				$v['diff_col']['num'] = 'num';
 			}
-			if (!$this->compareCountry($v['weight_country'], $excelRow['country'])) {
-				$v['diff_col']['weight_country'] = 'country';
+			if (!$this->compareCountry($v['country'], $excelRow['country'])) {
+				$v['diff_col']['country'] = 'country';
 			}
-			if (abs($v['unit_price'] - $excelRow['unit_price']) > 0.00001) {
-				$v['diff_col']['unit_price'] = 'unit_price';
-			}
+			//if (abs($v['unit_price'] - $excelRow['unit_price']) > 0.00001) {
+			//	$v['diff_col']['unit_price'] = 'unit_price';
+			//}
 			if (abs($v['total_price'] - $excelRow['total_price']) > 0.00001) {
 				$v['diff_col']['total_price'] = 'total_price';
 			}
@@ -81,20 +81,23 @@ class CustomsCompare {
 	}
 	
 	protected function compareCountry($pdfItemCountry, $excelItemCountry) {
-		$tmp = substr_compare($pdfItemCountry, $excelItemCountry, strlen($excelItemCountry) * -1);
-		return $tmp == 0;
+		$minLen = min(strlen($pdfItemCountry), strlen($excelItemCountry));
+		if ($minLen > 0) {
+			return strncmp($pdfItemCountry, $excelItemCountry, $minLen) == 0;
+		} else {
+			return $pdfItemCountry == $excelItemCountry;
+		}
 	}
 }
 /**
  * //pdf
-    array (size=7)
-      'id' => string '1' (length=1)
-      'no' => string '85122010.00' (length=11)
-      'weight_country' => string '2个德国' (length=10)
-      'name' => string '汽车用大灯/BMW牌' (length=22)
-      'unit_price' => string '4621.0250' (length=9)
-      'total_price' => string '9242.05' (length=7)
-      'num' => string '2' (length=1)
+        array (size=6)
+          'id' => int 50
+          'no' => string '8708295500' (length=10)
+          'name' => string '汽车用行李箱盖' (length=21)
+          'total_price' => string '4136.76' (length=7)
+          'country' => string '304' (length=3)
+          'num' => string '16' (length=2)
       
       //excel
         array (size=8)

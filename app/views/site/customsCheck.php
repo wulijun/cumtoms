@@ -2,8 +2,8 @@
 use yii\helpers\Html;
 
 $colNameMap = [
-	'pdfonly' => ['id' => 'ID', 'name' => '中文描述', 'no' => '商品编码', 'num' => '数量', 'unit_price' => '单价', 'total_price' => 'CIF总价', 'weight_country' => '原产国'],
-	'excelonly' => ['id' => 'ID', 'name' => '中文描述', 'no' => '商品编码', 'num' => '数量', 'unit_price' => '单价', 'total_price' => 'CIF总价', 'country' => '原产国'],
+	'pdfonly' => ['id' => 'ID', 'name' => '中文描述', 'no' => '商品编码', 'num' => '数量', 'total_price' => 'CIF总价', 'country' => '原产国'],
+	'excelonly' => ['id' => 'ID', 'name' => '中文描述', 'no' => '商品编码', 'num' => '数量', 'total_price' => 'CIF总价', 'country' => '原产国'],
 ];
 
 function _tpl_display_same($data, $key, $name, $header, $excelFile, $pdfFile) {
@@ -102,7 +102,7 @@ EOT;
             Excel: <input accept="application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="excel-file-uploader" type="file" name="excelfile">
           </div>
 		  <div class="form-group">
-            PDF: <input accept="application/pdf" id="pdf-file-uploader" type="file" name="pdffile[]" multiple="multiple">
+            海关Excel: <input accept="application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="pdf-file-uploader" type="file" name="pdffile[]" multiple="multiple">
           </div>
           <div class="form-group">
             <button type="submit" class="btn btn-primary search-btn">开始比对</button>
@@ -119,7 +119,7 @@ EOT;
   <div class="col-lg-12">
   <?php
   foreach ($checkRes as $v) {
-      _tpl_display_diff($v['res'], 'pdfonly', '只在PDF中出现的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
+      _tpl_display_diff($v['res'], 'pdfonly', '只在海关Excel中出现的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
       _tpl_display_diff($v['res'], 'excelonly', '只在Excel中出现的商品', $colNameMap['excelonly'], $reqParam['excelFilename'], $v['name']);
       _tpl_display_diff($v['res'], 'diff', '不一致的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
       _tpl_display_same($v['res'], 'same', '信息一致的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);

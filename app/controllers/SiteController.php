@@ -44,24 +44,16 @@ class SiteController extends Controller
     			$excelParser->parse($_FILES['excelfile']['tmp_name']);
     			$excelResult = $excelParser->getParsedResult();
     			
-    			$extractTextCmd = 'java -jar '.APP_PATH.'/vendor/pdfbox/pdfbox-app-2.0.8.jar ExtractText -console -sort ';
     			foreach ($pdfFiles as $k => $v) {
-    				$tmpCmd = $extractTextCmd . $v['file'];
-    				$output = null;
-    				exec($tmpCmd, $output, $ret);
-    				if (empty($output)) {
-    					$errMsg .= $v['name'].'抽取文本失败。';
-    				} else {
-    					$pdfParser = new \app\models\CustomsPdfParser();
-    					$pdfParser->parse($output);
+    					$pdfParser = new \app\models\CustomsExportExcelParser();
+    					$pdfParser->parse($v['file']);
     					$pdfResult = $pdfParser->getParsedResult();
     					if (empty($pdfResult)) {
     						$errMsg .= $v['name'].'中没有找到商品信息。';
     					} else {
     						$c = new \app\models\CustomsCompare();
-    						$pdfFiles[$k]['res'] = $c->compare($pdfResult, $excelResult);
+    						$pdfFiles[$k]['res'] = $c->compare($pdfResult[0], $excelResult);
     					}
-    				}
     			}
 
     		}    		
