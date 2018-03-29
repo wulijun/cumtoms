@@ -99,10 +99,10 @@ EOT;
       <?= Html::beginForm('/site/customs-check', 'post', array(
           'enctype' => 'multipart/form-data', 'id' => 'form-search', 'class' => 'form-inline')) ?>
           <div class="form-group">
-            Excel: <input accept="application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="excel-file-uploader" type="file" name="excelfile">
+            Excel: <input accept="application/vnd.ms-excel,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="excel-file-uploader" type="file" name="excelfile">
           </div>
 		  <div class="form-group">
-            海关Excel: <input accept="application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="pdf-file-uploader" type="file" name="pdffile[]" multiple="multiple">
+            海关Excel: <input accept="application/vnd.ms-excel,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="pdf-file-uploader" type="file" name="pdffile[]" multiple="multiple">
           </div>
           <div class="form-group">
             <button type="submit" class="btn btn-primary search-btn">开始比对</button>
