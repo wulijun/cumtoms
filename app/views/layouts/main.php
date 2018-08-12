@@ -49,7 +49,10 @@ $this->title = 'Customs平台';
                             <a href="/"><i class="fa fa-dashboard fa-fw"></i>&nbsp;首页</a>
                         </li>
                         <li>
-                            <a href="/site/customs-check"><i class="fa fa-check-circle-o fa-fw"></i>&nbsp;清单对账</a>
+                            <a href="/site/customs-excel-check"><i class="fa fa-check-circle-o fa-fw"></i>&nbsp;Excel清单对账</a>
+                        </li>
+                        <li>
+                            <a href="/site/customs-pdf-check"><i class="fa fa-check-circle-o fa-fw"></i>&nbsp;PDF清单对账</a>
                         </li>
                     </ul>
                 </div>
