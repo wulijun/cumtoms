@@ -58,17 +58,41 @@ class CustomsPdfParser
 		$pos = strpos($line, $curItemNo);
 		$line = trim(substr($line, $pos + strlen($curItemNo)));
 		$tmp = preg_split('/\s+/u', $line);
+		$countryIndex = -1;
+		foreach ($tmp as $k => $v) {
+			if (preg_match('/\([A-Z]+\)$/', $v) > 0) {
+				$countryIndex = $k;
+				$this->result[$this->curItemId]['country'] = $v;
+				break;
+			}
+		}
 		$n = count($tmp);
-		if ($n < 7) return;
-		$this->result[$this->curItemId]['weight'] = $tmp[1];
-		$this->result[$this->curItemId]['country'] = $tmp[2];
-		$this->result[$this->curItemId]['name'] = $tmp[0];
-		$this->result[$this->curItemId]['unit_price'] = $tmp[3];
-		$this->result[$this->curItemId]['total_price'] = $tmp[4];
+		if ($n < 7 || $countryIndex < 0) return;
+		
+		if ($countryIndex > 0) {
+			$this->result[$this->curItemId]['weight'] = $tmp[$countryIndex - 1];
+		}
+		if ($countryIndex > 2) {
+			$weightIndex = $countryIndex - 1;
+			$name = $tmp[0];
+			for ($i = 1; $i < $weightIndex; $i++) {
+				$name .= ' ' . $tmp[$i];
+			}
+			$this->result[$this->curItemId]['name'] = $name;
+		} else {
+			$this->result[$this->curItemId]['name'] = $tmp[0];
+		}
+		if ($countryIndex + 2 < $n) {
+			$this->result[$this->curItemId]['unit_price'] = $tmp[$countryIndex + 1];
+			$this->result[$this->curItemId]['total_price'] = $tmp[$countryIndex + 2];
+		}
 	}
 	
 	protected function findItemNum() {
-		if (isset($this->result[$this->curItemId]['unit_price']) && isset($this->result[$this->curItemId]['total_price'])) {
+		if (isset($this->result[$this->curItemId]['unit_price']) && isset($this->result[$this->curItemId]['total_price'])
+			&& $this->result[$this->curItemId]['unit_price'] > 0 && $this->result[$this->curItemId]['total_price'] >= $this->result[$this->curItemId]['unit_price']
+		) {
+			
 			$this->result[$this->curItemId]['num'] = $this->result[$this->curItemId]['total_price'] / $this->result[$this->curItemId]['unit_price'];
 			$this->result[$this->curItemId]['num'] = (int) round($this->result[$this->curItemId]['num'], 0);
 			return;
