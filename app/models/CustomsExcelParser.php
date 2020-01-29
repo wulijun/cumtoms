@@ -8,6 +8,7 @@ class CustomsExcelParser
 	protected $result;
 	protected $colNameMap = ['序号' => 'id', '商品编码' => 'no', '中文描述' => 'name', '单价' => 'unit_price', 'CIF总价' => 'total_price', '原产国' => 'country', '数量' => 'num', '净重' => 'weight'];
 	protected $colIndexInfo = [];
+	protected $colNameAlias = ['CIF总价' => ['总价']];
 	
 	public function __construct() {
 		Yii::setAlias('@PhpOffice/PhpSpreadsheet', APP_PATH.'/vendor/PhpSpreadsheet-1.0.0/src/PhpSpreadsheet/');
@@ -69,6 +70,13 @@ class CustomsExcelParser
 				if (strncmp($k, $v2, $tmpLen) == 0) {
 					$this->colIndexInfo[$k] = ['k' => $v, 'i' => $k2];
 					break;
+				} elseif (isset($this->colNameAlias[$k])) {
+					foreach ($this->colNameAlias[$k] as $v3) {
+						if (strncmp($v3, $v2, strlen($v3)) == 0) {
+							$this->colIndexInfo[$k] = ['k' => $v, 'i' => $k2];
+							break 2;
+						}
+					}
 				}
 			}
 		}
