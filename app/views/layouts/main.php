@@ -54,6 +54,9 @@ $this->title = 'Customs平台';
                         <li>
                             <a href="/site/customs-pdf-check"><i class="fa fa-check-circle-o fa-fw"></i>&nbsp;PDF清单对账</a>
                         </li>
+                        <li>
+                            <a href="/site/customs-commodity-order"><i class="fa fa-check-circle-o fa-fw"></i>&nbsp;商品报关单</a>
+                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

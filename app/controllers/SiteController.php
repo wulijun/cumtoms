@@ -110,4 +110,23 @@ class SiteController extends Controller
     	
     	return $this->render('customsPdfCheck', ['checkRes' => $pdfFiles, 'errMsg' => $errMsg, 'reqParam' => $reqParam]);
     }
+
+	public function actionCustomsCommodityOrder()
+    {
+    	$reqParam = [];
+    	$errMsg = '';
+    	if ($this->_req->getIsPost()) {
+    		if (empty($_FILES['excelfile']) || $_FILES['excelfile']['error'] != UPLOAD_ERR_OK) {
+    			$errMsg .= "Excel文件上传失败。";
+    		} else {
+    			$reqParam['excelFilename'] = $_FILES['excelfile']['name'];
+    			$excelParser = new \app\models\CustomsExcelCommodityParser();
+    			$excelParser->parse($_FILES['excelfile']['tmp_name']);
+    			$excelResult = $excelParser->getParsedResult();
+				$reqParam['downFilename'] = $excelParser->gen2007ExcelFile($_FILES['excelfile']['name']);
+    		}    		
+    	}
+    	
+    	return $this->render('customsCommodityOrder', ['checkRes' => $excelResult, 'errMsg' => $errMsg, 'reqParam' => $reqParam]);
+    }
 }

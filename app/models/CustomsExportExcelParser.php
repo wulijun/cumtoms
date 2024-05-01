@@ -75,6 +75,7 @@ class CustomsExportExcelParser
 		}
 		foreach ($this->colNameMap as $k => $v) {
 			foreach ($colData as $k2 => $v2) {
+                                if (empty($v2)) continue;
 				$tmpLen = strlen($k);
 				if (strncmp($k, $v2, $tmpLen) == 0) {
 					$this->colIndexInfo[$k] = ['k' => $v, 'i' => $k2];

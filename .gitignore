@@ -6,4 +6,6 @@
 /app/config/params.php
 /app/config/cas.php
 /app/web/assets
+/app/tmp
+/app/runtime
 

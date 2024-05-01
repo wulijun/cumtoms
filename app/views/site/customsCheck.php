@@ -90,13 +90,13 @@ EOT;
 ?>
 <div class="row">
   <div class="col-lg-12">
-    <h4 class="page-header">报关清单对账(Excel)</h4>
+    <h4 class="page-header">报关清单对账</h4>
   </div>
 </div>
 <div class="well">
 <div class="media">
   <div class="media-body search-box">
-      <?= Html::beginForm('/site/customs-excel-check', 'post', array(
+      <?= Html::beginForm('/site/customs-check', 'post', array(
           'enctype' => 'multipart/form-data', 'id' => 'form-search', 'class' => 'form-inline')) ?>
           <div class="form-group">
             Excel: <input accept="application/vnd.ms-excel,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="excel-file-uploader" type="file" name="excelfile">
@@ -119,7 +119,6 @@ EOT;
   <div class="col-lg-12">
   <?php
   foreach ($checkRes as $v) {
-      if (!isset($v['res'])) continue;
       _tpl_display_diff($v['res'], 'pdfonly', '只在海关Excel中出现的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
       _tpl_display_diff($v['res'], 'excelonly', '只在Excel中出现的商品', $colNameMap['excelonly'], $reqParam['excelFilename'], $v['name']);
       _tpl_display_diff($v['res'], 'diff', '不一致的商品', $colNameMap['pdfonly'], $reqParam['excelFilename'], $v['name']);
